@@ -1,5 +1,6 @@
 {
     "name": "browserpath",
+    "version": "1.0.0",
     "scripts": {
         "build": "tsc && rimraf dist && webpack",
         "debug": "dotenv -- nodemon -e ts,graphql,gql -x ts-node --inspect src/index.ts",
