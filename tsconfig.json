@@ -1,0 +1,53 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "experimentalDecorators": true,
+        "stripInternal": true,
+        "strictNullChecks": true,
+        "downlevelIteration": true,
+        "alwaysStrict": true,
+        "target": "ES6",
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "module": "commonjs",
+        "sourceMap": false,
+        "moduleResolution": "node",
+        "baseUrl": "./src",
+        "paths": {
+            "@/*": [
+                "*"
+            ]
+        },
+        "rootDirs": [
+            "src",
+            "scripts",
+            "tests"
+        ],
+        "typeRoots": [
+            "node_modules/@types",
+            "src/@types"
+        ],
+        "skipDefaultLibCheck": true,
+        "skipLibCheck": true,
+        "outDir": "dist",
+        "lib": [
+            "DOM",
+            "ES2017",
+            "ES2018",
+            "ES2019",
+            "ES7",
+            "esnext"
+        ]
+    },
+    "include": [
+        "src/**/*.ts",
+    ],
+    "exclude": [
+        "dist",
+        "tests",
+        "config",
+        "node_modules",
+        "scripts"
+    ]
+}
