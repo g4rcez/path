@@ -1,23 +1,17 @@
-export const CHAR_UPPERCASE_A = 65 as const; /* A */
-export const CHAR_LOWERCASE_A = 97 as const; /* a */
-export const CHAR_UPPERCASE_Z = 90 as const; /* Z */
-export const CHAR_LOWERCASE_Z = 122 as const; /* z */
-export const CHAR_DOT = 46 as const; /* . */
-export const CHAR_FORWARD_SLASH = 47 as const; /* / */
-export const CHAR_BACKWARD_SLASH = 92 as const; /* \ */
-export const CHAR_COLON = 58 as const; /* = */
-export const CHAR_QUESTION_MARK = 63 as const; /* ? */
+export const CHAR_UPPERCASE_A = 65 as const;
+export const CHAR_LOWERCASE_A = 97 as const;
+export const CHAR_UPPERCASE_Z = 90 as const;
+export const CHAR_LOWERCASE_Z = 122 as const;
+export const CHAR_DOT = 46 as const;
+export const CHAR_FORWARD_SLASH = 47 as const;
+export const CHAR_BACKWARD_SLASH = 92 as const;
+export const CHAR_COLON = 58 as const;
+export const CHAR_QUESTION_MARK = 63 as const;
 
 const app = navigator.appVersion;
 const isWindows = app.indexOf("Win") != -1;
 const isUnix = app.indexOf("X11") != -1 || app.indexOf("Linux") != -1 || app.indexOf("Mac") != -1;
 const processCwdEmulate = isUnix ? "/" : isWindows ? "c:\\" : "";
-
-const validateString = (value: string): void => {
-    if (typeof value !== "string") {
-        throw new Error(`${value} is not a string`);
-    }
-};
 
 const isPathSeparator = (code: number): boolean => code === CHAR_FORWARD_SLASH || code === CHAR_BACKWARD_SLASH;
 
@@ -95,7 +89,15 @@ const normalizeString = (
     return res;
 };
 
-function _format(sep: string, pathObject: any): string {
+type PathObject = {
+    name: string;
+    base: string;
+    dir: string;
+    root: string;
+    ext: string;
+};
+
+function _format(sep: string, pathObject: PathObject): string {
     if (pathObject === null || typeof pathObject !== "object") {
         throw new Error("pathObject is string");
     }
@@ -112,12 +114,10 @@ const win32 = {
         let resolvedDevice = "";
         let resolvedTail = "";
         let resolvedAbsolute = false;
-
         for (let i = args.length - 1; i >= -1; i--) {
             let path;
             if (i >= 0) {
                 path = args[i];
-                validateString(path);
                 if (path.length === 0) {
                     continue;
                 }
@@ -173,7 +173,6 @@ const win32 = {
                     rootEnd = 1;
                 }
             } else if (isWindowsDeviceRoot(code) && path.charCodeAt(1) === CHAR_COLON) {
-                // Possible device root
                 device = path.slice(0, 2);
                 rootEnd = 2;
                 if (len > 2 && isPathSeparator(path.charCodeAt(2))) {
@@ -206,7 +205,6 @@ const win32 = {
     },
 
     normalize(path: string): string {
-        validateString(path);
         const len = path.length;
         if (len === 0) return ".";
         let rootEnd = 0;
@@ -265,7 +263,6 @@ const win32 = {
     },
 
     isAbsolute(path: string): boolean {
-        validateString(path);
         const len = path.length;
         if (len === 0) {
             return false;
@@ -279,8 +276,10 @@ const win32 = {
                 isPathSeparator(path.charCodeAt(2)))
         );
     },
-    join(...args: string[]) {
-        if (args.length === 0) return ".";
+    join(...args: string[]): string {
+        if (args.length === 0) {
+            return ".";
+        }
 
         let joined: string | undefined;
         let firstPart: string | undefined;
@@ -320,8 +319,6 @@ const win32 = {
         return win32.normalize(joined);
     },
     relative(from: string, to: string): string {
-        validateString(from);
-        validateString(to);
         if (from === to) {
             return "";
         }
@@ -486,7 +483,9 @@ const win32 = {
             start = 2;
         }
         if (ext !== undefined && ext.length > 0 && ext.length <= path.length) {
-            if (ext === path) return "";
+            if (ext === path) {
+                return "";
+            }
             let extIdx = ext.length - 1;
             let firstNonSlashEnd = -1;
             for (let i = path.length - 1; i >= start; --i) {
@@ -973,5 +972,5 @@ const posix = {
     sep: "/",
     delimiter: ":"
 };
-
+export default isWindows ? win32 : posix;
 export { win32, posix };
